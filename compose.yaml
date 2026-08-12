@@ -5,8 +5,6 @@ services:
       - "5193:5193"
     networks:
       - observability
-    volumes:
-      - "./logs/api:/log"
   
   loki:
     image: grafana/loki:2.0.0
@@ -25,9 +23,9 @@ services:
     command:
       - -config.file=/etc/promtail/config.yaml
     volumes:
-      - "./promtail/config.yaml:/etc/promtail/config.yaml"
-      - "./logs/api:/logs/api"
-      - "./tmp:/tmp"
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - ./promtail:/etc/promtail
+      - ./tmp:/tmp
     networks:
       - observability
 

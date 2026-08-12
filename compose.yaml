@@ -36,8 +36,7 @@ services:
     depends_on:
       - api
     volumes:
-      - ./prometheus.yaml:/etc/prometheus/prometheus.yml
-      - ./alert.rules.yaml:/etc/prometheus/alert.rules.yaml
+      - ./prometheus:/etc/prometheus
     networks:
       - observability
 
@@ -46,7 +45,7 @@ services:
     ports:
       - "9093:9093"
     volumes:
-      - ./alertmanager.yaml:/prometheus/alertmanager.yml
+      - ./prometheus/alertmanager.yaml:/prometheus/alertmanager.yml
     command:
       - '--config.file=/prometheus/alertmanager.yml'
     networks:

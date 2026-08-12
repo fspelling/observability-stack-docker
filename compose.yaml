@@ -31,6 +31,29 @@ services:
     networks:
       - observability
 
+  prometheus:
+    image: prom/prometheus:v2.24.1
+    ports:
+      - "9090:9090"
+    depends_on:
+      - api
+    volumes:
+      - ./prometheus.yaml:/etc/prometheus/prometheus.yml
+      - ./alert.rules.yaml:/etc/prometheus/alert.rules.yaml
+    networks:
+      - observability
+
+  alertmanager:
+    image: prom/alertmanager:v0.21.0
+    ports:
+      - "9093:9093"
+    volumes:
+      - ./alertmanager.yaml:/prometheus/alertmanager.yml
+    command:
+      - '--config.file=/prometheus/alertmanager.yml'
+    networks:
+      - observability
+
 networks:
   observability:
     driver: bridge

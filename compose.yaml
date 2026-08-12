@@ -2,7 +2,7 @@ services:
   api:
     image: fspelling/vertical-slice-api:latest
     ports:
-      - "8080:80"
+      - "5193:5193"
     networks:
       - observability
     volumes:

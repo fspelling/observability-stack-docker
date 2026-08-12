@@ -19,4 +19,4 @@ scrape_configs:
           - localhost
         labels:
           job: apilogs
-          __path__: /logs/api/*log
+          __path__: /var/lib/docker/containers/*/*-json.log

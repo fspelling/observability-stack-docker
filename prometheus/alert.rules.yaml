@@ -1,0 +1,11 @@
+groups:
+  - name: webApi
+    rules:
+    - alert: WebApiMultiploAcessosAlert
+      expr: sum(rate(http_requests_received_total[1m])) by (instance) > 1
+      for: 30s
+      labels:
+        team: webapi
+      annotations:
+        titulo: "Numero alto de acessos"
+        description: "{{ $labels.instance }} esta com muitos acessos. Valor: {{ $value }}"

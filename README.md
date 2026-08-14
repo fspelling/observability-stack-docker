@@ -6,7 +6,7 @@ Stack de observabilidade com Docker Compose para monitoramento de métricas, log
 
 | Serviço | Imagem | Porta | Função |
 |---|---|---|---|
-| `api` | `fspelling/vertical-slice-api:latest` | 5193 | API de exemplo que expõe métricas no formato Prometheus |
+| `api` | `fspelling/vertical-slice-api:latest` | 5193 | API de exemplo que gera logs e expõe métricas no formato Prometheus |
 | `prometheus` | `prom/prometheus:v2.24.1` | 9090 | Coleta e armazena as métricas da `api` |
 | `alertmanager` | `prom/alertmanager:v0.21.0` | 9093 | Recebe alertas do Prometheus e os roteia via webhook |
 | `loki` | `grafana/loki:2.0.0` | 3100 | Armazena os logs agregados pelo Promtail |
@@ -21,7 +21,7 @@ api ──(scrape)──> prometheus ──(alertas)──> alertmanager ──(
 containers/host ──(tail)──> promtail ──(push)──> loki
 ```
 
-> **Nota:** não há um serviço de visualização (ex.: Grafana) no `compose.yaml` atual. Métricas podem ser consultadas na UI do próprio Prometheus (`:9090`) e logs via API do Loki (`:3100`). Veja [Melhorias sugeridas](#melhorias-sugeridas).
+> **Nota:** Métricas podem ser consultadas na UI do próprio Prometheus (`:9090`) e logs via API do Loki (`:3100`).
 
 ## Pré-requisitos
 
@@ -36,7 +36,7 @@ cd observability-stack-docker
 docker compose up -d
 ```
 
-Para acompanhar os logs dos serviços:
+Para acompanhar os logs dos serviços em **runtime**:
 
 ```bash
 docker compose logs -f
@@ -73,7 +73,7 @@ Os alertas são roteados pelo Alertmanager ([`prometheus/alertmanager.yaml`](pro
 
 O Promtail ([`promtail/config.yaml`](promtail/config.yaml)) coleta:
 
-- Logs do host em `/var/log/*log` (job `varlogs`)
+- Logs do (host Promtail) em `/var/log/*log` (job `varlogs`)
 - Logs de containers Docker em `/var/lib/docker/containers/*/*-json.log` (job `apilogs`), com o estágio `docker` para parsing automático
 
 Os logs são enviados ao Loki via `http://loki:3100/loki/api/v1/push`.
@@ -85,14 +85,3 @@ Antes de usar em outro contexto que não seja teste local, ajuste:
 - **Webhook do Alertmanager**: substitua a URL `https://webhook.site/...` em `prometheus/alertmanager.yaml` pelo endpoint real (Slack, e-mail, PagerDuty, etc.).
 - **Imagem da API**: `fspelling/vertical-slice-api:latest` — troque pela sua própria imagem/API se for reaproveitar a stack.
 - **Volumes do Promtail**: em Windows/WSL, `/var/lib/docker/containers` e `/var/log` podem exigir ajuste de caminho conforme o driver do Docker Desktop.
-
-## Melhorias sugeridas
-
-- Adicionar um serviço **Grafana** ao `compose.yaml` com Prometheus e Loki já provisionados como datasources, para visualização de métricas e logs.
-- Fixar (pin) as imagens em versões mais recentes — `loki`/`promtail` 2.0.0 e `alertmanager` 0.21.0 são bastante antigas.
-- Adicionar `healthcheck` aos serviços para facilitar orquestração e depende de `condition: service_healthy`.
-- Externalizar a URL do webhook do Alertmanager via variável de ambiente.
-
-## Licença
-
-Não especificada.

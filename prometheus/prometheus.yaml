@@ -17,18 +17,10 @@ scrape_configs:
     scrape_timeout: 3s
     static_configs:
       - targets:
-          - 'api:80'
+          - 'api:5193'
         labels:
           versao: "1.0"
-  
-  - job_name: 'mongodb-exporter'
-    scrape_interval: 5s
-    static_configs:
-      - targets:
-          - 'mongo-exporter:9216'
-        labels:
-          database: "mongodb"
-
+          
 alerting:
   alertmanagers:
     - scheme: http

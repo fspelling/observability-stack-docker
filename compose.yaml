@@ -3,8 +3,68 @@ services:
     image: fspelling/vertical-slice-api:v1
     ports:
       - "5193:5193"
+    depends_on: 
+     - jaeger
+     - gerador-nome
+     - gerador-documento
     networks:
       - observability
+
+  gerador-nome:
+    image: fabricioveronez/gerador-nome:latest
+    environment:
+      JAEGER_HOST: "jaeger"
+      JAEGER_PORT: "JAEGER_PORT"
+      JAEGER_SERVICE_NAME: "gerador-nome"       
+    networks:
+      - observability
+    depends_on: 
+     - jaeger  
+    ports:
+      - 5001:5000
+      
+  gerador-documento:
+    image: fabricioveronez/gerador-documento:latest
+    environment:
+      URL_GERADOR_CPF: "gerador-cpf:5000"
+      URL_GERADOR_RG: "gerador-rg:5000"
+      JAEGER_HOST: "jaeger"
+      JAEGER_PORT: "JAEGER_PORT"
+      JAEGER_SERVICE_NAME: "gerador-documento"       
+    networks:
+      - observability
+    depends_on: 
+     - jaeger
+     - gerador-cpf
+     - gerador-rg      
+    ports:
+      - 5002:5000
+
+  gerador-cpf:
+    image: fabricioveronez/gerador-cpf:latest
+    networks:
+      - observability   
+    environment:
+      JAEGER_HOST: "jaeger"
+      JAEGER_PORT: "JAEGER_PORT"
+      JAEGER_SERVICE_NAME: "gerador-cpf"        
+    depends_on: 
+     - jaeger    
+    ports:
+      - 5003:5000  
+      
+  gerador-rg:
+    image: fabricioveronez/gerador-rg:latest
+    environment:
+      JAEGER_HOST: "jaeger"
+      JAEGER_PORT: "JAEGER_PORT"
+      JAEGER_SERVICE_NAME: "gerador-rg"        
+    networks:
+      - observability
+    depends_on: 
+     - jaeger      
+    ports:
+      - 5004:5000
 
   promtail:
     image: grafana/promtail:2.0.0

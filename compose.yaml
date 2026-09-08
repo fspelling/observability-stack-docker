@@ -5,7 +5,7 @@ services:
       - "5193:5193"
     environment:
       Tracing__JAEGER_HOST: "jaeger"
-      Tracing__JAEGER_PORT: "JAEGER_PORT"
+      Tracing__JAEGER_PORT: "6831"
       Tracing__JAEGER_SERVICE_NAME: "gerador-pessoa"
       Providers__pessoaDocumentoBaseUrl: "gerador-documento:5000"
       Providers__pessoaNomeBaseUrl: "gerador-nome:5000"

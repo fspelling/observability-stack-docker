@@ -1,12 +1,12 @@
 services:
   api:
-    image: fspelling/vertical-slice-api:v1
+    image: fspelling/vertical-slice-api:v2
     ports:
       - "8080:8080"
     environment:
       Tracing__JAEGER_HOST: "jaeger"
       Tracing__JAEGER_PORT: "6831"
-      Tracing__JAEGER_SERVICE_NAME: "gerador-pessoa"
+      Tracing__JAEGER_SERVICE_NAME: "vertical-slice-api"
       Providers__pessoaDocumentoBaseUrl: "http://gerador-documento:5000"
       Providers__pessoaNomeBaseUrl: "http://gerador-nome:5000"
       ASPNETCORE_ENVIRONMENT: "Development"
